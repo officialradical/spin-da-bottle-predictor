@@ -618,6 +618,7 @@ async function payForVouchers(vouchers) {
         },
         body: JSON.stringify({
           vouchers: Number(vouchers),
+amount: Number(vouchers) * 5,
           name: "Spin Da Bottle Customer",
           email: email
         })
