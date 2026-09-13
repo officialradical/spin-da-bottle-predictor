@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spin Da Bottle — Admin Panel</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#20140f;color:#fff;font-family:Arial,sans-serif;min-height:100vh}
+.wrap{max-width:900px;margin:auto;padding:24px 16px}
+.card{background:#2b1b14;border:1px solid #5a3828;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 8px 30px #0006}
+h1{margin:0 0 8px;color:#7dff8a;font-size:28px}
+h2{margin-top:0}
+.sub{color:#cbbdb5;margin-bottom:20px}
+input,button{width:100%;padding:14px;border-radius:10px;border:1px solid #604334;font-size:16px}
+input{background:#17100d;color:#fff;margin:7px 0 12px}
+button{background:#25c45a;color:#07150a;font-weight:700;border:0;cursor:pointer;margin-top:6px}
+button.secondary{background:#443027;color:#fff}
+button.danger{background:#b82f2f;color:#fff}
+.hidden{display:none}
+.msg{padding:12px;border-radius:10px;background:#17100d;margin:12px 0;color:#ddd;white-space:pre-wrap}
+table{width:100%;border-collapse:collapse;margin-top:12px}
+th,td{text-align:left;padding:11px 7px;border-bottom:1px solid #4b3024}
+th{color:#7dff8a}
+.small{font-size:13px;color:#bcaea6}
+.row{display:grid;grid-template-columns:1fr 130px;gap:8px}
+@media(max-width:600px){table{font-size:13px}.row{grid-template-columns:1fr 110px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>Spin Da Bottle Admin</h1>
+    <div class="sub">Owner-only control panel</div>
+    <div id="loginBox">
+      <h2>Admin Login</h2>
+      <input id="email" type="email" placeholder="Admin email">
+      <input id="password" type="password" placeholder="Password">
+      <button onclick="login()">LOGIN</button>
+      <div id="loginMsg" class="msg hidden"></div>
+    </div>
+    <div id="panel" class="hidden">
+      <div class="row">
+        <button onclick="loadUsers()">REFRESH USERS</button>
+        <button class="danger" onclick="logout()">LOG OUT</button>
+      </div>
+      <div id="msg" class="msg">Loading...</div>
+      <div style="overflow:auto">
+        <table>
+          <thead><tr><th>Name</th><th>Email</th><th>Vouchers</th><th>Load</th></tr></thead>
+          <tbody id="users"></tbody>
+        </table>
+      </div>
+      <p class="small">Voucher loading is performed through the protected Supabase function. Never put a Kora secret key on this page.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://fcxdazlpeagmuagsayja.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE";
+
+const sb = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+const $ = id => document.getElementById(id);
+
+function show(id,text){
+  $(id).textContent=text;
+  $(id).classList.remove("hidden");
+}
+
+async function login(){
+  const email=$("email").value.trim();
+  const password=$("password").value;
+  if(!email || !password){
+    show("loginMsg","Enter your admin email and password.");
+    return;
+  }
+  show("loginMsg","Signing in...");
+  const {error}=await sb.auth.signInWithPassword({email,password});
+  if(error){
+    show("loginMsg",error.message);
+    return;
+  }
+  $("loginBox").classList.add("hidden");
+  $("panel").classList.remove("hidden");
+  await loadUsers();
+}
+
+async function loadUsers(){
+  $("msg").textContent="Loading users...";
+  const {data,error}=await sb.rpc("admin_get_users");
+  if(error){
+    $("msg").textContent=error.message;
+    return;
+  }
+  $("msg").textContent=`${(data||[]).length} user(s) found.`;
+  $("users").innerHTML=(data||[]).map(u=>`
+    <tr>
+      <td>${esc(u.name||"—")}</td>
+      <td>${esc(u.email||"—")}</td>
+      <td>${Number(u.vouchers||0)}</td>
+      <td>
+        <input id="v-${esc(u.id)}" type="number" min="1" step="1" placeholder="Qty">
+        <button onclick="loadVouchers('${esc(u.id)}')">LOAD</button>
+      </td>
+    </tr>
+  `).join("");
+}
+
+async function loadVouchers(userId){
+  const input=$("v-"+userId);
+  const amount=Number(input.value);
+  if(!Number.isInteger(amount) || amount<1){
+    alert("Enter a whole number of vouchers.");
+    return;
+  }
+  if(!confirm(`Load ${amount} voucher(s) to this user?`)) return;
+
+  $("msg").textContent="Loading vouchers...";
+  const {error}=await sb.rpc("load_vouchers",{
+    p_user_id:userId,
+    p_amount:amount
+  });
+  if(error){
+    $("msg").textContent=error.message;
+    return;
+  }
+  input.value="";
+  $("msg").textContent=`Successfully loaded ${amount} voucher(s).`;
+  await loadUsers();
+}
+
+async function logout(){
+  await sb.auth.signOut();
+  $("panel").classList.add("hidden");
+  $("loginBox").classList.remove("hidden");
+}
+
+function esc(value){
+  return String(value).replace(/[&<>"']/g,m=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[m]));
+}
+
+(async()=>{
+  const {data:{session}}=await sb.auth.getSession();
+  if(session){
+    $("loginBox").classList.add("hidden");
+    $("panel").classList.remove("hidden");
+    await loadUsers();
+  }
+})();
+</script>
+</body>
+</html>
