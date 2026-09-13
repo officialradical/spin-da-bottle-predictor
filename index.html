@@ -148,15 +148,13 @@ left:50%;
 top:50%;
 width:78%;
 height:54px;
-transform:translate(-50%,-50%);
-background:linear-gradient(
-#38ad20,
-#087b11 60%,
-#064f0a
-);
+transform:translate(-50%,-50%) rotate(0deg);
+transform-origin:50% 50%;
+background:linear-gradient(#38ad20,#087b11 60%,#064f0a);
 border:3px solid #064e0b;
 border-radius:25px 30px 30px 25px;
-box-shadow:0 7px 12px #0008
+box-shadow:0 7px 12px #0008;
+will-change:transform;
 }
 
 .bottle:before{
@@ -169,7 +167,7 @@ height:26px;
 background:#168719;
 border:3px solid #064e0b;
 border-left:0;
-border-radius:0 6px 6px 0
+border-radius:0 6px 6px 0;
 }
 
 .bottle:after{
@@ -180,7 +178,7 @@ right:18%;
 top:6px;
 height:4px;
 background:#9be88d66;
-border-radius:5px
+border-radius:5px;
 }
 
 .result{
@@ -510,130 +508,81 @@ closeBuy();
 
 function spin(){
 
-if(spinning){
-return;
-}
+if(spinning) return;
 
 if(!vouchers){
-
 openBuy();
-
 return;
-
 }
 
 spinning = true;
-
 vouchers--;
-
 round++;
-
 update();
 
-const bottle =
-document.querySelector(".bottle");
+const bottle = document.getElementById("bottle");
+const answer = document.getElementById("answer");
+const roundText = document.getElementById("round");
 
-/*
-The result is selected first.
+const result = Math.random() < 0.5 ? "UP" : "DOWN";
 
-UP = bottle settles pointing upward.
-DOWN = bottle settles pointing downward.
-*/
+const finalAngle = result === "UP" ? 270 : 90;
 
-const result =
-Math.random() < 0.5
-? "UP"
-: "DOWN";
-
-/*
-The bottle starts pointing right.
-
-270 degrees = UP
-90 degrees = DOWN
-*/
-
-const target =
-result === "UP"
-? 270
-: 90;
-
-const answer =
-document.getElementById("answer");
+bottle.style.transform =
+"translate(-50%,-50%) rotate(0deg)";
 
 answer.textContent = "…";
+answer.className = "answer";
+roundText.textContent = "Spinning…";
 
-answer.className =
-"answer";
+void bottle.offsetWidth;
 
-document
-.getElementById("round")
-.textContent =
-"Spinning…";
-
-/*
-3 full rotations first,
-then the bottle smoothly settles
-on the selected direction.
-*/
-
-bottle.animate(
-
+const animation = bottle.animate(
 [
 {
 transform:
 "translate(-50%,-50%) rotate(0deg)"
 },
-
 {
 transform:
-"translate(-50%,-50%) rotate(1080deg)"
+"translate(-50%,-50%) rotate(720deg)"
 },
-
 {
 transform:
-`translate(-50%,-50%) rotate(${target + 360}deg)`
+`translate(-50%,-50%) rotate(${finalAngle + 720}deg)`
 },
-
 {
 transform:
-`translate(-50%,-50%) rotate(${target}deg)`
+`translate(-50%,-50%) rotate(${finalAngle}deg)`
 }
-
 ],
-
 {
-duration:1800,
-easing:"cubic-bezier(.12,.78,.18,1)"
+duration:2200,
+easing:"cubic-bezier(.12,.78,.18,1)",
+fill:"forwards"
 }
-
 );
 
-setTimeout(function(){
+animation.onfinish = function(){
 
 bottle.style.transform =
-`translate(-50%,-50%) rotate(${target}deg)`;
+`translate(-50%,-50%) rotate(${finalAngle}deg)`;
 
-answer.textContent =
-result;
+answer.textContent = result;
 
 answer.className =
-"answer " +
-result.toLowerCase();
+"answer " + result.toLowerCase();
 
-document
-.getElementById("round")
-.textContent =
-"Round " +
-round +
-" • Voucher used";
+roundText.textContent =
+"Round " + round + " • Voucher used";
 
 spinning = false;
 
 update();
 
-},1800);
+};
 
-}
+
 
 update();
 
