@@ -641,6 +641,88 @@ amount: Number(vouchers) * 5,
   }
 }
 </script>
+<!-- TOP 6 GAMES -->
+<section class="top-games">
+  <h2>Top 6 Games in Ghana</h2>
 
+  <div class="game-grid">
+    <button class="game-card game1" type="button" onclick="openBuy()"><span>1</span></button>
+    <button class="game-card game2" type="button" onclick="openBuy()"><span>2</span></button>
+    <button class="game-card game3" type="button" onclick="openBuy()"><span>3</span></button>
+    <button class="game-card game4" type="button" onclick="openBuy()"><span>4</span></button>
+    <button class="game-card game5" type="button" onclick="openBuy()"><span>5</span></button>
+    <button class="game-card game6" type="button" onclick="openBuy()"><span>6</span></button>
+  </div>
+</section>
+
+<style>
+.top-games{
+  max-width:1100px;
+  margin:28px auto;
+  padding:0 16px;
+}
+.top-games h2{
+  margin:0 0 18px;
+  font-size:30px;
+  font-weight:800;
+  color:#fff;
+}
+.game-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+.game-card{
+  position:relative;
+  aspect-ratio:1/1;
+  border:0;
+  border-radius:20px;
+  overflow:hidden;
+  cursor:pointer;
+  background-image:url("top-games.jpg");
+  background-size:300% 200%;
+  background-repeat:no-repeat;
+  box-shadow:0 6px 18px rgba(0,0,0,.45);
+  transition:transform .15s ease,filter .15s ease;
+}
+.game-card:active{
+  transform:scale(.97);
+}
+.game-card span{
+  position:absolute;
+  top:0;
+  left:0;
+  width:58px;
+  height:58px;
+  display:grid;
+  place-items:center;
+  background:#ef233c;
+  color:#fff;
+  font-size:27px;
+  font-weight:900;
+  clip-path:polygon(0 0,100% 0,0 100%);
+  padding-right:20px;
+  padding-bottom:20px;
+}
+.game1{background-position:0% 0%}
+.game2{background-position:50% 0%}
+.game3{background-position:100% 0%}
+.game4{background-position:0% 100%}
+.game5{background-position:50% 100%}
+.game6{background-position:100% 100%}
+
+@media(max-width:700px){
+  .game-grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+  }
+  .top-games h2{
+    font-size:24px;
+  }
+  .game-card{
+    border-radius:14px;
+  }
+}
+</style>
 </body>
 </html>
