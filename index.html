@@ -1,1 +1,509 @@
-index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Spin Da Bottle Predictor</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+background:#20140f;
+color:#fff;
+font-family:Arial,sans-serif;
+min-height:100vh
+}
+
+.app{
+max-width:520px;
+margin:auto;
+min-height:100vh;
+overflow:hidden
+}
+
+.top{
+height:78px;
+background:#e91d25;
+display:flex;
+align-items:center;
+padding:0 15px;
+gap:11px
+}
+
+.back{
+font-size:32px
+}
+
+.title{
+font-size:20px;
+font-weight:900;
+flex:1
+}
+
+.game{
+min-height:calc(100vh - 78px);
+padding:18px 12px 30px;
+text-align:center;
+background:radial-gradient(circle at 50% 45%,#704932 0,#4b3021 43%,#24160f 100%)
+}
+
+h1{
+margin:8px 0 3px;
+font-size:27px
+}
+
+.sub{
+color:#d5c4b8;
+font-size:13px
+}
+
+.voucher{
+max-width:395px;
+margin:16px auto 0;
+background:#17110e;
+border:1px solid #ffffff25;
+border-radius:15px;
+padding:13px;
+display:flex;
+align-items:center;
+gap:12px;
+text-align:left
+}
+
+.ticket{
+font-size:28px
+}
+
+.vtext{
+flex:1
+}
+
+.vtext b{
+display:block;
+font-size:15px
+}
+
+.vtext span{
+font-size:12px;
+color:#aaa
+}
+
+.count{
+font-size:22px;
+font-weight:900;
+color:#ffd45c
+}
+
+.board{
+position:relative;
+width:min(410px,92vw);
+aspect-ratio:1;
+margin:24px auto 22px;
+border-radius:50%;
+background:linear-gradient(180deg,#72c900 0 49%,#f09a00 50% 100%);
+border:10px solid #9a5227;
+box-shadow:0 0 0 5px #5b2c17,0 18px 35px #0009
+}
+
+.board:before{
+content:"";
+position:absolute;
+inset:10px;
+border:2px solid #eee;
+border-radius:50%
+}
+
+.board:after{
+content:"";
+position:absolute;
+left:0;
+right:0;
+top:50%;
+height:4px;
+background:#eee;
+transform:translateY(-2px)
+}
+
+.upword,.downword{
+position:absolute;
+left:0;
+right:0;
+font-size:62px;
+font-weight:900;
+color:#ffffff8c;
+z-index:2
+}
+
+.upword{
+top:22%
+}
+
+.downword{
+top:63%
+}
+
+.bottle{
+position:absolute;
+z-index:4;
+left:50%;
+top:50%;
+width:78%;
+height:54px;
+transform:translate(-50%,-50%);
+background:linear-gradient(#38ad20,#087b11 60%,#064f0a);
+border:3px solid #064e0b;
+border-radius:25px 30px 30px 25px;
+box-shadow:0 7px 12px #0008
+}
+
+.bottle:before{
+content:"";
+position:absolute;
+right:-34px;
+top:11px;
+width:40px;
+height:26px;
+background:#168719;
+border:3px solid #064e0b;
+border-left:0;
+border-radius:0 6px 6px 0
+}
+
+.bottle:after{
+content:"";
+position:absolute;
+left:9%;
+right:18%;
+top:6px;
+height:4px;
+background:#9be88d66;
+border-radius:5px
+}
+
+.result{
+background:#120e0bdb;
+border:1px solid #ffffff25;
+border-radius:16px;
+padding:14px 18px;
+max-width:395px;
+margin:auto
+}
+
+.caption{
+font-size:11px;
+letter-spacing:2px;
+color:#bdb0a7
+}
+
+.answer{
+font-size:42px;
+font-weight:1000;
+margin:3px 0
+}
+
+.up{
+color:#63df45
+}
+
+.down{
+color:#ff9d16
+}
+
+button{
+width:100%;
+border:0;
+border-radius:13px;
+padding:16px;
+font-size:17px;
+font-weight:900;
+cursor:pointer
+}
+
+.spin{
+margin-top:15px;
+background:#e91d25;
+color:white
+}
+
+.spin.locked{
+background:#555
+}
+
+.buy{
+margin-top:10px;
+background:#ffd34e;
+color:#23160b
+}
+
+.note{
+font-size:11px;
+color:#b9aaa0;
+line-height:1.45;
+max-width:395px;
+margin:14px auto
+}
+
+.modal{
+position:fixed;
+inset:0;
+background:#000b;
+display:none;
+align-items:flex-end;
+justify-content:center;
+z-index:20
+}
+
+.modal.show{
+display:flex
+}
+
+.sheet{
+width:min(520px,100%);
+background:#17181d;
+border-radius:24px 24px 0 0;
+padding:24px 18px 30px;
+text-align:center
+}
+
+.sheet h2{
+margin:0 0 8px
+}
+
+.packs{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin:18px 0
+}
+
+.pack{
+background:#252831;
+border:1px solid #383b44;
+border-radius:14px;
+padding:15px;
+cursor:pointer
+}
+
+.pack strong{
+display:block;
+font-size:21px;
+color:#ffd45c
+}
+
+.pack small{
+color:#aaa
+}
+
+.close{
+background:#333;
+color:#fff
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header class="top">
+<span class="back">‹</span>
+<span class="title">Spin Da Bottle Predictor</span>
+</header>
+
+<main class="game">
+
+<h1>SPIN DA BOTTLE</h1>
+<div class="sub">UP / DOWN</div>
+
+<div class="voucher">
+<div class="ticket">🎟️</div>
+
+<div class="vtext">
+<b>Spin Vouchers</b>
+<span>Get a voucher before you spin</span>
+</div>
+
+<div class="count" id="count">0</div>
+</div>
+
+<div class="board">
+
+<div class="upword">UP</div>
+<div class="downword">DOWN</div>
+<div class="bottle" id="bottle"></div>
+
+</div>
+
+<div class="result">
+
+<div class="caption">RESULT</div>
+
+<div id="answer" class="answer">—</div>
+
+<div id="round" class="sub">
+Buy a demo voucher before spinning
+</div>
+
+</div>
+
+<button id="spin" class="spin locked" onclick="spin()">
+🔒 GET A VOUCHER TO SPIN
+</button>
+
+<button class="buy" onclick="openBuy()">
+🎟️ BUY VOUCHERS
+</button>
+
+<div class="note">
+Demo version: vouchers have no cash value.
+Kora Pay will be connected later.
+</div>
+
+</main>
+</div>
+
+<div class="modal" id="modal">
+
+<div class="sheet">
+
+<h2>Buy Spin Vouchers</h2>
+
+<div class="sub">
+Select a demo voucher pack
+</div>
+
+<div class="packs">
+
+<div class="pack" onclick="add(1)">
+<strong>1 Voucher</strong>
+<small>Demo credit</small>
+</div>
+
+<div class="pack" onclick="add(5)">
+<strong>5 Vouchers</strong>
+<small>Demo credits</small>
+</div>
+
+<div class="pack" onclick="add(10)">
+<strong>10 Vouchers</strong>
+<small>Demo credits</small>
+</div>
+
+<div class="pack" onclick="add(25)">
+<strong>25 Vouchers</strong>
+<small>Demo credits</small>
+</div>
+
+</div>
+
+<button class="close" onclick="closeBuy()">
+Cancel
+</button>
+
+</div>
+</div>
+
+<script>
+
+let vouchers=0;
+let round=0;
+
+function update(){
+
+document.getElementById("count").textContent=vouchers;
+
+const spinButton=document.getElementById("spin");
+
+if(vouchers){
+
+spinButton.classList.remove("locked");
+spinButton.textContent="SPIN BOTTLE";
+
+}else{
+
+spinButton.classList.add("locked");
+spinButton.textContent="🔒 GET A VOUCHER TO SPIN";
+
+}
+
+}
+
+function openBuy(){
+
+document.getElementById("modal").classList.add("show");
+
+}
+
+function closeBuy(){
+
+document.getElementById("modal").classList.remove("show");
+
+}
+
+function add(n){
+
+vouchers+=n;
+
+update();
+
+closeBuy();
+
+}
+
+function spin(){
+
+if(!vouchers){
+
+openBuy();
+
+return;
+
+}
+
+vouchers--;
+
+update();
+
+round++;
+
+const bottle=document.getElementById("bottle");
+
+bottle.animate(
+
+[
+{transform:"translate(-50%,-50%) rotate(0deg)"},
+{transform:"translate(-50%,-50%) rotate(1440deg)"}
+],
+
+{
+duration:1200,
+easing:"cubic-bezier(.15,.8,.25,1)"
+}
+
+);
+
+setTimeout(function(){
+
+const result=Math.random()<0.5?"UP":"DOWN";
+
+const answer=document.getElementById("answer");
+
+answer.textContent=result;
+
+answer.className="answer "+result.toLowerCase();
+
+document.getElementById("round").textContent=
+"Round "+round+" • Voucher used";
+
+},1150);
+
+}
+
+update();
+
+</script>
+
+</body>
+</html>
