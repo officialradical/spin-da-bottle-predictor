@@ -477,15 +477,10 @@ spinButton.disabled = false;
 }
 
 function openBuy(){
-
-if(!spinning){
-
-document
-.getElementById("modal")
-.classList.add("show");
-
-}
-
+  const modal = document.getElementById("modal");
+  if(modal){
+    modal.classList.add("show");
+  }
 }
 
 function closeBuy(){
