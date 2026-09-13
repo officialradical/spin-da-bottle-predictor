@@ -385,51 +385,61 @@ Kora Pay will be connected later.
 </div>
 
 <div class="modal" id="modal">
+  <div class="sheet">
 
-<div class="sheet">
+    <h2>Buy Spin Vouchers</h2>
 
-<h2>
-Buy Spin Vouchers
-</h2>
+    <div class="sub">
+      Pay with MTN MoMo
+    </div>
 
-<div class="sub">
-Select a demo voucher pack
+    <div class="payment-box">
+      <strong>MTN MoMo</strong><br>
+      Number: <b>0547712495</b><br>
+      Name: <b>EMMANUEL ANIKA</b>
+    </div>
+
+    <div class="sub">
+      Send the exact amount for your voucher pack.
+    </div>
+
+    <div class="packs">
+
+      <div class="pack" onclick="selectPack(1,5)">
+        <strong>1 Voucher</strong>
+        <small>GH₵100</small>
+      </div>
+
+      <div class="pack" onclick="selectPack(5,25)">
+        <strong>5 Vouchers</strong>
+        <small>GH₵400</small>
+      </div>
+
+      <div class="pack" onclick="selectPack(10,50)">
+        <strong>10 Vouchers</strong>
+        <small>GH₵500</small>
+      </div>
+
+      <div class="pack" onclick="selectPack(25,125)">
+        <strong>25 Vouchers</strong>
+        <small>GH₵1000</small>
+      </div>
+
+    </div>
+
+    <div id="paymentStatus" class="sub">
+      Select a pack after making your payment.
+    </div>
+
+    <button
+      class="close"
+      onclick="closeBuy()"
+    >
+      Cancel
+    </button>
+
+  </div>
 </div>
-
-<div class="packs">
-
-<div class="pack" onclick="add(1)">
-<strong>1 Voucher</strong>
-<small>Demo credit</small>
-</div>
-
-<div class="pack" onclick="add(5)">
-<strong>5 Vouchers</strong>
-<small>Demo credits</small>
-</div>
-
-<div class="pack" onclick="add(10)">
-<strong>10 Vouchers</strong>
-<small>Demo credits</small>
-</div>
-
-<div class="pack" onclick="add(25)">
-<strong>25 Vouchers</strong>
-<small>Demo credits</small>
-</div>
-
-</div>
-
-<button
-class="close"
-onclick="closeBuy()"
->
-Cancel
-</button>
-
-</div>
-</div>
-
 <script>
 
 let vouchers = 0;
