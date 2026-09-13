@@ -599,6 +599,46 @@ update();
 document.querySelector(".buy").addEventListener("click", function(){
   document.getElementById("modal").classList.add("show");
 });
+</script> <script>
+async function payForVouchers(vouchers) {
+  const email = prompt("Enter your email for the payment:");
+
+  if (!email) {
+    alert("Email is required.");
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      "https://fcxdazlpeagmuagsayja.supabase.co/functions/v1/create-payment",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          vouchers: Number(vouchers),
+          name: "Spin Da Bottle Customer",
+          email: email
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok || !data.checkout_url) {
+      alert(data.error || "Payment could not be started.");
+      console.log(data);
+      return;
+    }
+
+    window.location.href = data.checkout_url;
+
+  } catch (error) {
+    console.error(error);
+    alert("Could not connect to the payment service.");
+  }
+}
 </script>
 
 </body>
