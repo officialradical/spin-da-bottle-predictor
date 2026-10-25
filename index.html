@@ -611,10 +611,25 @@ document.querySelector(".buy").addEventListener("click", function(){
 });
 </script> <script>
 async function payForVouchers(vouchers) {
-  const email = prompt("Enter your email for the payment:");
+  const prices = {
+    3: 300,
+    5: 500,
+    10: 800,
+    25: 1700
+  };
 
-  if (!email) {
-    alert("Email is required.");
+  const quantity = Number(vouchers);
+  const amount = prices[quantity];
+
+  if (!amount) {
+    alert("Please select a valid voucher package.");
+    return;
+  }
+
+  const email = prompt("Enter your email address for your voucher purchase:");
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+    alert("Please enter a valid email address.");
     return;
   }
 
@@ -624,13 +639,14 @@ async function payForVouchers(vouchers) {
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "apikey": "sb_publishable_DpRoplNSvHveMpStM5NolQ_ofoVRbeL",
+          "Authorization": "sb_publishable_DpRoplNSvHveMpStM5NolQ_ofoVRbeL"
         },
         body: JSON.stringify({
-          vouchers: Number(vouchers),
-amount: Number(vouchers) * 5,
-          name: "Spin Da Bottle Customer",
-          email: email
+          vouchers: quantity,
+          email: email.trim().toLowerCase(),
+          name: "Spin Da Bottle Customer"
         })
       }
     );
@@ -638,16 +654,15 @@ amount: Number(vouchers) * 5,
     const data = await response.json();
 
     if (!response.ok || !data.checkout_url) {
-      alert(data.error || "Payment could not be started.");
-      console.log(data);
+      console.error("Payment initialization failed:", data);
+      alert(data.error || "Could not create your payment. Please try again.");
       return;
     }
 
     window.location.href = data.checkout_url;
-
   } catch (error) {
-    console.error(error);
-    alert("Could not connect to the payment service.");
+    console.error("Payment error:", error);
+    alert("Could not connect to the payment service. Please try again.");
   }
 }
 </script>
