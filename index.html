@@ -644,10 +644,11 @@ async function payForVouchers(vouchers) {
           "Authorization": "sb_publishable_DpRoplNSvHveMpStM5NolQ_ofoVRbeL"
         },
         body: JSON.stringify({
-          vouchers: quantity,
-          email: email.trim().toLowerCase(),
-          name: "Spin Da Bottle Customer"
-        })
+  vouchers: quantity,
+  amount: amount,
+  email: email.trim().toLowerCase(),
+  name: "Spin Da Bottle Customer"
+})
       }
     );
 
