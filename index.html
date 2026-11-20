@@ -48,6 +48,9 @@ button{width:100%;border:0;border-radius:13px;padding:16px;font-size:17px;font-w
 .top-games{max-width:1100px;margin:28px auto;padding:0 16px}
 .game-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 .game-card{aspect-ratio:1;background:linear-gradient(135deg,#7b3926,#e79b20)}
+  body:not(.logged-in) .game {
+  display: none !important;
+}
 </style>
 </head>
 
@@ -329,6 +332,7 @@ async function accountAction(endpoint) {
 
     if (data.access_token) {
       localStorage.setItem("spinAccount", JSON.stringify(data));
+      document.body.classList.add("logged-in");
       status.textContent = "Success! You are logged in.";
     } else {
       status.textContent = "Account created. Please check your email if confirmation is requested.";
@@ -341,6 +345,7 @@ async function accountAction(endpoint) {
 function logoutAccount() {
   localStorage.removeItem("spinAccount");
   document.getElementById("accountStatus").textContent = "Logged out.";
+  document.body.classList.remove("logged-in");
 }
 </script>
 
