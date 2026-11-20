@@ -275,5 +275,74 @@ async function payForVouchers(number){
 update();
 </script>
 
+<section style="max-width:395px;margin:20px auto;padding:20px;background:#17110e;border-radius:15px;text-align:center">
+  <h2>Create Account / Log In</h2>
+  <p style="color:#bbb">Register or log in to continue</p>
+  <input id="accountEmail" type="email" placeholder="Your email address" style="width:100%;padding:14px;margin:8px 0;border-radius:8px">
+  <input id="accountPassword" type="password" placeholder="Create a password" style="width:100%;padding:14px;margin:8px 0;border-radius:8px">
+  <button onclick="registerAccount()" style="background:#e91d25;color:white;margin:8px 0">CREATE ACCOUNT</button>
+  <button onclick="loginAccount()" style="background:#ffd34e;color:#222">LOG IN</button>
+  <p id="accountStatus" style="color:#ffd45c"></p>
+  <button onclick="logoutAccount()" style="background:#444;color:white">LOG OUT</button>
+</section>
+
+<script>
+const AUTH_URL = "https://fcxdazlpeagmuagsayja.supabase.co";
+const AUTH_KEY = "sb_publishable_DpRoplNSvHveMpStM5NolQ_ofoVRbeL";
+
+async function registerAccount() {
+  await accountAction("/auth/v1/signup");
+}
+
+async function loginAccount() {
+  await accountAction("/auth/v1/token?grant_type=password");
+}
+
+async function accountAction(endpoint) {
+  const email = document.getElementById("accountEmail").value.trim();
+  const password = document.getElementById("accountPassword").value;
+  const status = document.getElementById("accountStatus");
+
+  if (!email || password.length < 6) {
+    status.textContent = "Enter your email and a password of at least 6 characters.";
+    return;
+  }
+
+  status.textContent = "Please wait...";
+
+  try {
+    const response = await fetch(AUTH_URL + endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": AUTH_KEY
+      },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      status.textContent = data.msg || data.message || data.error_description || "Please try again.";
+      return;
+    }
+
+    if (data.access_token) {
+      localStorage.setItem("spinAccount", JSON.stringify(data));
+      status.textContent = "Success! You are logged in.";
+    } else {
+      status.textContent = "Account created. Please check your email if confirmation is requested.";
+    }
+  } catch (error) {
+    status.textContent = "Connection error. Please try again.";
+  }
+}
+
+function logoutAccount() {
+  localStorage.removeItem("spinAccount");
+  document.getElementById("accountStatus").textContent = "Logged out.";
+}
+</script>
+
 </body>
 </html>
