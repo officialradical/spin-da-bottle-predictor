@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spin Da Bottle - Admin Panel</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:20px;background:#101010;color:white;font-family:Arial,sans-serif}
+.container{max-width:450px;margin:35px auto;background:#1c1c1c;padding:25px;border-radius:15px}
+h2{text-align:center;color:#b99aff}
+p{color:#bbb}
+input,select,button{width:100%;padding:14px;margin:10px 0;border-radius:8px;border:1px solid #444;font-size:16px}
+input,select{background:#292929;color:white}
+button{background:#8d5bea;color:white;border:0;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.5}
+#panel{display:none}
+#message{padding:10px;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<div class="container">
+<h2>SPIN DA BOTTLE</h2>
+<p style="text-align:center">Administrator Voucher Panel</p>
+
+<div id="login">
+<h3>Admin Login</h3>
+<input id="email" type="email" placeholder="Administrator email">
+<input id="password" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+</div>
+
+<div id="panel">
+<h3>Credit Customer Vouchers</h3>
+<input id="customer" type="email" placeholder="Customer account email">
+
+<label>Select voucher package</label>
+<select id="quantity">
+<option value="3">3 Vouchers - GH₵300</option>
+<option value="5">5 Vouchers - GH₵500</option>
+<option value="10">10 Vouchers - GH₵800</option>
+<option value="25">25 Vouchers - GH₵1,700</option>
+</select>
+
+<button id="creditButton" onclick="credit()">Credit Vouchers</button>
+<button onclick="logout()" style="background:#444">Logout</button>
+</div>
+
+<div id="message"></div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://fcxdazlpeagmuagsayja.supabase.co";
+const SUPABASE_KEY = "PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE";
+const ADMIN_EMAIL = "spindabottle71@gmail.com";
+
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+function message(text){
+ document.getElementById("message").textContent=text;
+}
+
+async function login(){
+ const email=document.getElementById("email").value.trim().toLowerCase();
+ const password=document.getElementById("password").value;
+
+ if(email!==ADMIN_EMAIL){
+  message("This email is not authorized.");
+  return;
+ }
+
+ const {data,error}=await db.auth.signInWithPassword({email,password});
+
+ if(error){
+  message(error.message);
+  return;
+ }
+
+ document.getElementById("login").style.display="none";
+ document.getElementById("panel").style.display="block";
+ message("Administrator logged in.");
+}
+
+async function credit(){
+ const customerEmail=document.getElementById("customer").value.trim();
+ const quantity=Number(document.getElementById("quantity").value);
+ const button=document.getElementById("creditButton");
+
+ if(!customerEmail){
+  message("Enter the customer's account email.");
+  return;
+ }
+
+ if(!confirm("Confirm that payment has been verified before crediting these vouchers?")) return;
+
+ button.disabled=true;
+ message("Processing...");
+
+ const {data,error}=await db.functions.invoke("admin-credit-vouchers",{
+  body:{
+   customer_email:customerEmail,
+   voucher_quantity:quantity
+  }
+ });
+
+ button.disabled=false;
+
+ if(error){
+  message("Error: "+error.message);
+  return;
+ }
+
+ if(data && data.error){
+  message("Error: "+data.error);
+  return;
+ }
+
+ message("Request completed. Check the customer's voucher balance before confirming.");
+}
+
+async function logout(){
+ await db.auth.signOut();
+ document.getElementById("panel").style.display="none";
+ document.getElementById("login").style.display="block";
+ message("Logged out.");
+}
+</script>
+</body>
+</html>
