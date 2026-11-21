@@ -378,6 +378,7 @@ async function accountAction(endpoint) {
 
     if (data.access_token) {
       localStorage.setItem("spinAccount", JSON.stringify(data));
+     await loadVoucherBalance();
       
       document.body.classList.add("logged-in");
       status.textContent = "Success! You are logged in.";
