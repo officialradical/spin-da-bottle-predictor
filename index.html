@@ -139,6 +139,8 @@ Select a package to continue.
 "use strict";
 
 let vouchers = 0;
+let voucherUserId = null;
+let voucherAccessToken = null;
 let round = 0;
 let spinning = false;
 
@@ -332,6 +334,9 @@ async function accountAction(endpoint) {
 
     if (data.access_token) {
       localStorage.setItem("spinAccount", JSON.stringify(data));
+      voucherUserId = data.user.id;
+voucherAccessToken = data.access_token;
+await loadVoucherBalance();
       document.body.classList.add("logged-in");
       status.textContent = "Success! You are logged in.";
     } else {
