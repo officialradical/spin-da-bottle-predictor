@@ -165,13 +165,42 @@ function closeBuy(){
   document.getElementById("modal").classList.remove("show");
 }
 
-function spin(){
+async function spin(){
   if(spinning || vouchers < 1) return;
 
-  spinning = true;
-  vouchers--;
-  round++;
-  update();
+  const account = JSON.parse(localStorage.getItem("spinAccount") || "null");
+
+if (!account || !account.access_token) {
+  alert("Please log in again.");
+  return;
+}
+
+try {
+  const response = await fetch(AUTH_URL + "/functions/v1/use-voucher", {
+    method: "POST",
+    headers: {
+      "apikey": AUTH_KEY,
+      "Authorization": "Bearer " + account.access_token,
+      "Content-Type": "application/json"
+    }
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    alert(data.error || "Unable to use voucher.");
+    return;
+  }
+
+  vouchers = Number(data.balance);
+} catch (error) {
+  alert("Unable to connect. Please try again.");
+  return;
+}
+
+spinning = true;
+round++;
+update();
 
   const bottle = document.getElementById("bottle");
   const answer = document.getElementById("answer");
