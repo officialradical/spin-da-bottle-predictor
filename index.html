@@ -341,7 +341,8 @@ async function accountAction(endpoint) {
       status.textContent = "Account created. Please check your email if confirmation is requested.";
     }
   } catch (error) {
-    status.textContent = "Connection error. Please try again.";
+    
+   status.textContent = error.message || String(error);
   }
 }
 
