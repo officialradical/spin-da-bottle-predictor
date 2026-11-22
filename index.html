@@ -48,6 +48,58 @@ button{width:100%;border:0;border-radius:13px;padding:16px;font-size:17px;font-w
 .top-games{max-width:1100px;margin:28px auto;padding:0 16px}
 .game-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 .game-card{aspect-ratio:1;background:linear-gradient(135deg,#7b3926,#e79b20)}
+  
+/* ACCOUNT MENU DESIGN FIX */
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  gap: 10px;
+}
+
+.account-menu {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.menu-dots {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #111;
+  color: white;
+  font-size: 24px;
+  border: none;
+}
+
+.account-dropdown {
+  position: absolute;
+  top: 55px;
+  right: 0;
+  width: 230px;
+  max-width: 85vw;
+  padding: 15px;
+  background: #171717;
+  color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0,0,0,.4);
+  z-index: 9999;
+  display: none;
+  box-sizing: border-box;
+}
+
+.account-dropdown button,
+.account-dropdown a {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 10px;
+  padding: 12px;
+  text-align: center;
+  border-radius: 8px;
+}
+
   body:not(.logged-in) .game {
   display: none !important;
 }
