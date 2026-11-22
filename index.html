@@ -58,7 +58,15 @@ button{width:100%;border:0;border-radius:13px;padding:16px;font-size:17px;font-w
 
 <div class="app">
 <header class="top">
-<span class="title">Spin Da Bottle Predictor</span>
+  <span class="title">Spin Da Bottle Predictor</span>
+  <div class="account-menu" id="accountMenu">
+    <button onclick="toggleAccountMenu()" class="menu-dots">⋮</button>
+    <div id="accountDropdown" class="account-dropdown" style="display:none;">
+      <p id="menuEmail">My Account</p>
+      <button onclick="logoutAccount()">LOG OUT</button>
+      <a href="https://wa.me/15097995620?text=Hello%2C%20I%20need%20payment%20support.%20My%20Gmail%20is%3A" target="_blank">WHATSAPP SUPPORT</a>
+    </div>
+  </div>
 </header>
 
 <main class="game">
@@ -407,6 +415,8 @@ async function accountAction(endpoint) {
 
     if (data.access_token) {
       localStorage.setItem("spinAccount", JSON.stringify(data));
+      document.getElementById("menuEmail").textContent =
+  data.user?.email || email;
      await loadVoucherBalance();
       
       document.body.classList.add("logged-in");
