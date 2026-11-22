@@ -107,7 +107,7 @@ body:not(.logged-in) .payment-support {
   body:not(.logged-in) .game {
   display: none !important;
 }
-  body.logged-in #accountSection {
+  body.logged-in #accountForm {
   display: none !important;
 }
 </style>
@@ -377,14 +377,17 @@ update();
 </script>
 
 <section id="accountSection" style="max-width:395px;margin:0 auto;">
-  <h2>Create Account / Log In</h2>
+  <h2>Create Account / Log In</h2> 
+  <div id="accountForm">
   <p style="color:#bbb">Register or log in to continue</p>
   <input id="accountEmail" type="email" placeholder="Your email address" style="width:100%;padding:14px;margin:8px 0;border-radius:8px">
   <input id="accountPassword" type="password" placeholder="Create a password" style="width:100%;padding:14px;margin:8px 0;border-radius:8px">
   <button onclick="registerAccount()" style="background:#e91d25;color:white;margin:8px 0">CREATE ACCOUNT</button>
   <button onclick="loginAccount()" style="background:#ffd34e;color:#222">LOG IN</button>
   <p id="accountStatus" style="color:#ffd45c"></p>
+    </div>
   <button onclick="logoutAccount()" style="background:#444;color:white">LOG OUT</button>
+    
 </section>
 
 <script>
