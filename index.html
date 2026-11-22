@@ -51,6 +51,7 @@ button{width:100%;border:0;border-radius:13px;padding:16px;font-size:17px;font-w
   
 /* ACCOUNT MENU DESIGN FIX */
 .top {
+ 
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -59,10 +60,13 @@ button{width:100%;border:0;border-radius:13px;padding:16px;font-size:17px;font-w
 }
 
 .account-menu {
+  
   position: relative;
   flex-shrink: 0;
 }
-
+body:not(.logged-in) .payment-support {
+  display: none !important;
+}
 .menu-dots {
   width: 48px;
   height: 48px;
