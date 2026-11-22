@@ -437,7 +437,14 @@ function logoutAccount() {
 }
 
 
+function toggleAccountMenu() {
+  const menu = document.getElementById("accountDropdown");
 
+  if (!menu) return;
+
+  menu.style.display =
+    menu.style.display === "block" ? "none" : "block";
+}
 </script>
 
 <div style="text-align:center;padding:20px;margin:20px auto;max-width:400px;background:#171717;border-radius:14px;">
