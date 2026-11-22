@@ -373,7 +373,7 @@ async function payForVouchers(number){
 update();
 </script>
 
-<section style="max-width:395px;margin:0 auto;">
+<section id="accountSection" style="max-width:395px;margin:0 auto;">
   <h2>Create Account / Log In</h2>
   <p style="color:#bbb">Register or log in to continue</p>
   <input id="accountEmail" type="email" placeholder="Your email address" style="width:100%;padding:14px;margin:8px 0;border-radius:8px">
@@ -479,9 +479,10 @@ async function accountAction(endpoint) {
       status.textContent = "Success! You are logged in.";
     } else {
       status.textContent = "Account created. Please check your email if confirmation is requested.";
+      document.getElementById("accountSection").style.display = "none";
     }
   } catch (error) {
-    
+
    status.textContent = error.message || String(error);
   }
 }
