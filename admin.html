@@ -155,6 +155,67 @@ function esc(value){
     await loadUsers();
   }
 })();
+  $("panel").insertAdjacentHTML("beforeend", `
+  <div class="card">
+    <h2>Load Vouchers by Gmail</h2>
+    <p class="small">Find a customer by their registered Gmail address.</p>
+    <input id="gmailSearch" type="email" placeholder="Customer Gmail">
+    <input id="gmailQty" type="number" min="1" step="1" placeholder="Voucher quantity">
+    <button onclick="loadByGmail()">SEARCH & LOAD VOUCHERS</button>
+    <div id="gmailMsg" class="msg"></div>
+  </div>
+`);
+
+async function loadByGmail(){
+  const email = $("gmailSearch").value.trim().toLowerCase();
+  const amount = Number($("gmailQty").value);
+
+  if(!email || !email.includes("@")){
+    $("gmailMsg").textContent = "Enter the customer's registered Gmail.";
+    return;
+  }
+
+  if(!Number.isInteger(amount) || amount < 1){
+    $("gmailMsg").textContent = "Enter a whole number of vouchers.";
+    return;
+  }
+
+  $("gmailMsg").textContent = "Searching for customer...";
+
+  const {data, error} = await sb.rpc("admin_get_users");
+
+  if(error){
+    $("gmailMsg").textContent = error.message;
+    return;
+  }
+
+  const user = (data || []).find(
+    u => String(u.email || "").trim().toLowerCase() === email
+  );
+
+  if(!user){
+    $("gmailMsg").textContent = "No customer found with that Gmail.";
+    return;
+  }
+
+  if(!confirm(`Load ${amount} voucher(s) for ${user.email}?`)) return;
+
+  $("gmailMsg").textContent = "Loading vouchers...";
+
+  const {error:loadError} = await sb.rpc("load_vouchers", {
+    p_user_id: user.id,
+    p_amount: amount
+  });
+
+  if(loadError){
+    $("gmailMsg").textContent = loadError.message;
+    return;
+  }
+
+  $("gmailMsg").textContent = `Successfully loaded ${amount} voucher(s) for ${user.email}.`;
+  $("gmailQty").value = "";
+  await loadUsers();
+}
 </script>
 </body>
 </html>
